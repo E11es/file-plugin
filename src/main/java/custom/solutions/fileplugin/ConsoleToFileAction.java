@@ -1,14 +1,32 @@
 package custom.solutions.fileplugin;
 
+import com.intellij.codeInsight.actions.LayoutCodeDialog;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Caret;
+import com.intellij.openapi.fileChooser.*;
+import com.intellij.openapi.fileChooser.actions.FileChooserAction;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypes;
+import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.messages.MessageDialog;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.file.PsiDirectoryImpl;
+import com.intellij.ui.messages.MessagesServiceImpl;
 import org.jetbrains.annotations.NotNull;
+
+import java.time.LocalDateTime;
 
 /**
  * Action.
@@ -22,11 +40,6 @@ public class ConsoleToFileAction extends DumbAwareAction {
         super("Export to File", "Creates file based on UI data", AllIcons.FileTypes.Any_type);
     }
 
-    /**
-     * Action view update.
-     *
-     * @param e {@link AnActionEvent}.
-     */
     @Override
     public void update(@NotNull AnActionEvent e) {
         ConsoleView data = e.getData(LangDataKeys.CONSOLE_VIEW);
@@ -36,12 +49,6 @@ public class ConsoleToFileAction extends DumbAwareAction {
         e.getPresentation().setEnabled(isDataPresented || isCaretSelectionPresent);
     }
 
-
-    /**
-     * An action logic itself.
-     *
-     * @param e {@link AnActionEvent}.
-     */
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         ConsoleView data = e.getData(LangDataKeys.CONSOLE_VIEW);
@@ -53,12 +60,16 @@ public class ConsoleToFileAction extends DumbAwareAction {
         //TODO: can we avoid cast at data? Is it a good idea?
         String initialContent = isDataPresented ? ((ConsoleViewImpl) data).getText() : caret.getSelectedText();
 
-        /*
-        There are some problems: if we want create a file, but PSI-provides logic for version control. It's not a
-        good idea for our solution. Create Document or VirtualFile not good idea too (according to official
-         documentation). We can use standard java File-api (approved by documentation of plugin development).
+        //TODO:  implemented through Application.runWriteAction() API. Avoid nulls with generalize some methods maybe
+        PsiFile fileFromText = PsiFileFactory.getInstance(e.getProject()).createFileFromText("console_output",
+                FileTypes.PLAIN_TEXT, initialContent);
 
-         */
+        FileSaverDescriptor descriptor = new FileSaverDescriptor("Save As", "Save console input");
+        VirtualFile virtualFileDir = FileChooser.chooseFile(descriptor, e.getProject(), null);
+        if (virtualFileDir.isDirectory()) {
+            PsiDirectory directory = PsiManager.getInstance(e.getProject()).findDirectory(virtualFileDir);
+            directory.add(fileFromText);
+        }
     }
 
     //TODO: obtain alternatives. What is the point?

@@ -1,4 +1,8 @@
 
+## [0.0.3] - 27-09-2024
+### Added
+- added functionality for file saving on disk
+
 ## [0.0.2] - 21-09-2024
 ### Added
 - action added
