@@ -5,17 +5,16 @@
 
     <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
-    <name>File-plugin</name>
+    <name>Console-To-File-Action-Plugin</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor email="support@yourcompany.com" url="https://www.yourcompany.com">YourCompany</vendor>
+    <vendor email="toshqaaa@gmail.com"/>
 
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-    Enter short description for your plugin here.<br>
-    <em>most HTML tags may be used</em>
+    Plugin to save your console output data as plain text file
   ]]></description>
 
     <!-- Product and plugin compatibility requirements.
@@ -30,10 +29,8 @@
 
     <actions>
         <!--Define my own group that ref to another group-->
-        <!--TODO: check that ConsoleView.PopupMenu is the right aim between all consoles views-->
         <group id="ConsoleView.PopupMenu.Extended">
             <reference ref="ConsoleView.PopupMenu"/>
-            <!--FIXME: try to add separators between actions-->
             <action id="consoleToFileAction" class="custom.solutions.fileplugin.ConsoleToFileAction"
                     description="Creates file based on console data" icon="AllIcons.FileTypes.Any_type">
                 <!--Inserts action between compareWithClipboard and clearAll actions-->

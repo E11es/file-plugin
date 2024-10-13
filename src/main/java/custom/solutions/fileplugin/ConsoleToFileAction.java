@@ -27,9 +27,8 @@ import java.util.ResourceBundle;
  * Action.
  */
 public class ConsoleToFileAction extends DumbAwareAction {
-    //        TODO: write a readme.
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("file_plugin");
-    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy.MM.dd_HH.mm");
+    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy.MM.dd.HH_mm");
 
     /**
      * Parent's constructor call.
@@ -62,7 +61,6 @@ public class ConsoleToFileAction extends DumbAwareAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent event) {
         Project project = event.getData(LangDataKeys.PROJECT);
-//      TODO: add caret model mode
         ConsoleViewImpl consoleView = getCurrentConsoleView(event);
 
         if (project == null | consoleView == null) {
@@ -73,7 +71,7 @@ public class ConsoleToFileAction extends DumbAwareAction {
                 BUNDLE.getString("file.saver.descriptor.title"),
                 BUNDLE.getString("file.saver.descriptor.description")
         );
-        //TODO: think about vf name that we can get from saveFileDialog.
+
         VirtualFile virtualFileDir = FileChooser.chooseFile(descriptor, project, null);
 
         String fileName = createFileName();
@@ -83,9 +81,6 @@ public class ConsoleToFileAction extends DumbAwareAction {
             PsiFile fileFromText = PsiFileFactory
                     .getInstance(project)
                     .createFileFromText(fileName, PlainTextFileType.INSTANCE, initialContent);
-
-//             TODO: Think about this
-//            FileSaverDialog saveFileDialog = FileChooserFactory.getInstance().createSaveFileDialog(descriptor, project);
 
             if (virtualFileDir == null || !virtualFileDir.isDirectory()) {
                 throw new IllegalStateException("Virtual file must be presented as directory.");
